@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html class="w-full h-full overflow-hidden" lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>数位语文 · 每日测验</title>
+<script src="https://modao.cc/agent-py/static/source/js/tailwindcss.js"></script>
+<script src="https://modao.cc/agent-py/static/source/js/iconify-icon.min.js"></script>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased;}
+  .font-song{font-family:"Songti SC","STSong","SimSun","Noto Serif SC",serif;}
+  .cloud-bg{background-image:radial-gradient(circle at 12% 22%, rgba(255,255,255,.20) 0 1.5px, transparent 2px),radial-gradient(circle at 62% 68%, rgba(255,255,255,.15) 0 1.5px, transparent 2px);background-size:34px 34px,46px 46px;}
+  .noscroll{scrollbar-width:none;}
+  .noscroll::-webkit-scrollbar{display:none;}
+</style>
+</head>
+<body class="w-full h-full m-0 overflow-hidden flex items-center justify-center bg-[#E8DAC7]">
+<div class="w-full h-full max-w-[393px] max-h-[852px] bg-[#FBF7F1] overflow-hidden flex flex-col relative">
+<header class="shrink-0 cloud-bg bg-gradient-to-br from-[#E8590C] to-[#F59E0B] px-5 pt-5 pb-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-white text-[20px]" icon="mdi:clipboard-check"></iconify-icon>
+<h1 class="font-song text-white text-[17px] font-bold tracking-[0.1em]">每日测验</h1>
+</div>
+<span class="text-[11px] text-white/90 bg-white/20 px-2.5 py-[5px] rounded-lg">尚未开放</span>
+</div>
+<p class="text-white/80 text-[11px] mt-2.5">2026年9月28日 星期一 · 测验自 10 月 8 日起每日开放</p>
+</header>
+<main class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden noscroll [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden pb-8" id="main">
+<section class="mx-4 mt-3 bg-white rounded-2xl border border-[#F2E3D1] overflow-hidden">
+<div class="relative h-[78px] bg-gradient-to-br from-[#7C2D12] via-[#9A3412] to-[#C2410C]">
+<div class="absolute right-3 top-2 font-song text-[46px] leading-none text-white/12 select-none">测</div>
+<div class="absolute inset-0 px-4 flex flex-col justify-center">
+<p class="text-white/80 text-[10px]">每日测验</p>
+<p class="font-song text-white text-[14px] font-bold mt-1">尚未开放 · 10 月 8 日起逐日开放</p>
+</div>
+</div>
+<div class="px-4 py-3 flex items-center justify-between text-[11px]">
+<span class="text-[#8A7458]">共 0 题 · 每题 1 分</span>
+<span class="text-[#8A7458] font-medium">须先完成当日背诵任务</span>
+</div>
+</section>
+<div class="mx-4 mt-3 flex items-center gap-2 bg-[#FFF7EC] border border-[#F6E3CB] rounded-xl px-3.5 py-2.5">
+<iconify-icon class="text-[15px] text-[#D9480F] shrink-0" icon="mdi:information-outline"></iconify-icon>
+<p class="text-[11px] text-[#8A7458] leading-relaxed">每日背诵任务完成后开放当天测验，题型覆盖古诗词补全、诗人思想感情、文言句式判断与词类活用判断，均为常规应试题型。</p>
+</div>
+<div id="quizArea"></div>
+<section class="hidden mx-4 mt-4" id="result"></section>
+<div class="h-2"></div>
+</main>
+<div class="shrink-0 px-4 pt-2.5 pb-3 bg-white border-t border-[#EFE1CE]">
+<button class="w-full h-11 rounded-xl bg-[#F5F0E9] text-[#B0A390] text-[14px] font-medium flex items-center justify-center gap-1.5 cursor-not-allowed" disabled="" id="submitBtn">
+<iconify-icon class="text-[17px]" icon="mdi:lock-outline"></iconify-icon><span id="submitText">尚未开放</span>
+</button>
+</div>
+<nav class="shrink-0 h-[60px] bg-white border-t border-[#EFE1CE] flex items-stretch">
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-[#A79A8A]" href="home.html">
+<iconify-icon class="text-[21px]" icon="mdi:home-variant-outline"></iconify-icon>
+<span class="text-[10px]">首页</span>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-[#A79A8A]" href="plan.html">
+<iconify-icon class="text-[21px]" icon="mdi:calendar-text-outline"></iconify-icon>
+<span class="text-[10px]">计划</span>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-[#A79A8A]" href="library.html">
+<iconify-icon class="text-[21px]" icon="mdi:bookshelf"></iconify-icon>
+<span class="text-[10px]">篇目库</span>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-[#D9480F]" href="quiz.html">
+<iconify-icon class="text-[21px]" icon="mdi:clipboard-check"></iconify-icon>
+<span class="text-[10px] font-medium">测验</span>
+</a>
+</nav>
+</div>
+<script>
+  var TODAY_INDEX = 17;
+
+  function renderEmpty() {
+    var html = "";
+    html += '<div class="mx-4 mt-6 bg-white rounded-2xl border border-[#F2E3D1] px-6 py-10 flex flex-col items-center text-center">';
+    html += '<span class="w-16 h-16 rounded-2xl bg-[#F5F0E9] text-[#A79A8A] flex items-center justify-center"><iconify-icon icon="mdi:lock-outline" class="text-[34px]"></iconify-icon></span>';
+    html += '<p class="font-song text-[16px] font-bold text-[#3B2E22] mt-3.5">每日测验尚未开放</p>';
+    html += '<p class="text-[12px] text-[#8A7458] mt-2 leading-relaxed">计划自 2026 年 10 月 8 日起每日推进一天的内容，完成当天背诵任务后才能参加当天测验，暂不支持提前测验。</p>';
+    html += '<a href="plan.html" class="mt-5 h-10 px-5 rounded-xl bg-gradient-to-r from-[#E8590C] to-[#F59E0B] text-white text-[13px] font-medium flex items-center gap-1.5"><iconify-icon icon="mdi:calendar-text-outline" class="text-[16px]"></iconify-icon>查看背诵计划</a>';
+    html += '</div>';
+    document.getElementById("quizArea").innerHTML = html;
+    var btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    btn.className = "w-full h-11 rounded-xl bg-[#F5F0E9] text-[#B0A390] text-[14px] font-medium flex items-center justify-center gap-1.5 cursor-not-allowed";
+    document.getElementById("submitText").textContent = "尚未开放";
+    document.getElementById("submitBtn").innerHTML = '<iconify-icon class="text-[17px]" icon="mdi:lock-outline"></iconify-icon><span id="submitText">尚未开放</span>';
+  }
+
+  renderEmpty();
+</script>
+</body>
+</html>

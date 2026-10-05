@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html class="w-full h-full overflow-hidden" lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>数位语文 · 背诵计划</title>
+<script src="https://modao.cc/agent-py/static/source/js/tailwindcss.js"></script>
+<script src="https://modao.cc/agent-py/static/source/js/iconify-icon.min.js"></script>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased;}
+  .font-song{font-family:"Songti SC","STSong","SimSun","Noto Serif SC",serif;}
+  .cloud-bg{background-image:radial-gradient(circle at 12% 22%, rgba(255,255,255,.20) 0 1.5px, transparent 2px),radial-gradient(circle at 62% 68%, rgba(255,255,255,.15) 0 1.5px, transparent 2px);background-size:34px 34px,46px 46px;}
+  .noscroll{scrollbar-width:none;}
+  .noscroll::-webkit-scrollbar{display:none;}
+</style>
+</head>
+<body class="w-full h-full m-0 overflow-hidden flex items-center justify-center bg-[#E8DAC7]">
+<div class="w-full h-full max-w-[393px] max-h-[852px] bg-[#FBF7F1] overflow-hidden flex flex-col relative">
+<header class="shrink-0 cloud-bg bg-gradient-to-br from-[#E8590C] to-[#F59E0B] px-5 pt-5 pb-5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-white text-[20px]" icon="mdi:calendar-text"></iconify-icon>
+<h1 class="font-song text-white text-[17px] font-bold tracking-[0.1em]">背诵计划</h1>
+</div>
+<span class="text-[11px] text-white/85">起始 2026-10-08</span>
+</div>
+<div class="mt-4 grid grid-cols-3 gap-2 text-center">
+<div class="bg-white/15 rounded-lg py-2">
+<div class="font-song text-white text-[18px] font-bold leading-none">93</div>
+<div class="text-white/80 text-[10px] mt-1">计划天数</div>
+</div>
+<div class="bg-white/15 rounded-lg py-2">
+<div class="font-song text-white text-[18px] font-bold leading-none">33</div>
+<div class="text-white/80 text-[10px] mt-1">九上任务</div>
+</div>
+<div class="bg-white/15 rounded-lg py-2">
+<div class="font-song text-white text-[18px] font-bold leading-none">93</div>
+<div class="text-white/80 text-[10px] mt-1">七上以来任务</div>
+</div>
+</div>
+</header>
+<div class="shrink-0 bg-[#FBF7F1] px-4 pt-3.5 pb-2 border-b border-[#F0E1CE]">
+<div class="flex bg-[#F3E8DA] rounded-xl p-1">
+<button class="tab flex-1 h-8 rounded-lg text-[12.5px] font-medium transition-colors" data-filter="all">全部</button>
+<button class="tab flex-1 h-8 rounded-lg text-[12.5px] font-medium transition-colors" data-filter="jxs">九年级上册</button>
+<button class="tab flex-1 h-8 rounded-lg text-[12.5px] font-medium transition-colors" data-filter="qb">七上以来</button>
+</div>
+<p class="text-[11px] text-[#A08A70] mt-2.5 leading-relaxed">
+      排计划规则：短诗词曲每日一首；长文章每日背 1–2 个自然段；七上以来的长词曲、长诗文拆为两部分排入。每日共 2 项，自 2026 年 10 月 8 日起逐日开放，未来日期不可提前背诵。
+    </p>
+</div>
+<main class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden noscroll [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden pt-1 pb-6" id="planList"></main>
+<nav class="shrink-0 h-[60px] bg-white border-t border-[#EFE1CE] flex items-stretch">
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-[#A79A8A]" href="home.html">
+<iconify-icon class="text-[21px]" icon="mdi:home-variant-outline"></iconify-icon>
+<span class="text-[10px]">首页</span>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-[#D9480F]" href="plan.html">
+<iconify-icon class="text-[21px]" icon="mdi:calendar-text"></iconify-icon>
+<span class="text-[10px] font-medium">计划</span>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-[#A79A8A]" href="library.html">
+<iconify-icon class="text-[21px]" icon="mdi:bookshelf"></iconify-icon>
+<span class="text-[10px]">篇目库</span>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-[#A79A8A]" href="quiz.html">
+<iconify-icon class="text-[21px]" icon="mdi:clipboard-check-outline"></iconify-icon>
+<span class="text-[10px]">测验</span>
+</a>
+</nav>
+</div>
+<script>
+  var TODAY_INDEX = 17;
+
+  var JXS_RAW = [
+    "qycxue|沁园春·雪|全篇",
+    "yylji|岳阳楼记|第 1 段",
+    "yylji|岳阳楼记|第 2 段",
+    "yylji|岳阳楼记|第 3 段",
+    "yylji|岳阳楼记|第 4 段",
+    "yylji|岳阳楼记|第 5 段",
+    "zwtji|醉翁亭记|第 1–2 段",
+    "zwtji|醉翁亭记|第 3–4 段",
+    "hxtkx|湖心亭看雪|全文",
+    "xinglunan|行路难（其一）|全篇",
+    "chouletian|酬乐天扬州初逢席上见赠|全篇",
+    "sdtou|水调歌头·明月几时有|全篇",
+    "cglz|曹刿论战|第 1 段",
+    "cglz|曹刿论战|第 2–3 段",
+    "csbiao|出师表|第 1 段",
+    "csbiao|出师表|第 2 段",
+    "csbiao|出师表|第 3 段",
+    "csbiao|出师表|第 4 段",
+    "csbiao|出师表|第 5 段",
+    "csbiao|出师表|第 6 段",
+    "swcjz|十五从军征|全篇",
+    "bxge|白雪歌送武判官归京|全篇",
+    "nxzi|南乡子·登京口北固亭有怀|全篇",
+    "gldy|过零丁洋|全篇",
+    "spy|山坡羊·潼关怀古|全篇",
+    "yyysd|月夜忆舍弟|全篇",
+    "csgjhz|长沙过贾谊宅|全篇",
+    "zqzlg|左迁至蓝关示侄孙湘|全篇",
+    "sszx|商山早行|全篇",
+    "xycdl|咸阳城东楼|全篇",
+    "wuti|无题|全篇",
+    "xxzi|行香子·树绕村庄|全篇",
+    "cne|丑奴儿·书博山道中壁|全篇"
+  ];
+
+  var QB_RAW = [
+    "gcanghai|观沧海|1",
+    "cbgss|次北固山下|1",
+    "lcqly|闻王昌龄左迁龙标遥有此寄|1",
+    "tjsqs|天净沙·秋思|1",
+    "yongxue|咏雪|1",
+    "ctqyq|陈太丘与友期行|1",
+    "lunyu|论语十二章|3",
+    "jiezi|诫子书|1",
+    "emsy|峨眉山月歌|1",
+    "jnflg|江南逢李龟年|1",
+    "xjjr|行军九日思长安故园|1",
+    "yssxc|夜上受降城闻笛|1",
+    "qcqy|秋词（其一）|1",
+    "yyjb|夜雨寄北|1",
+    "syysrfdz|十一月四日风雨大作（其二）|1",
+    "tguan|潼关|1",
+    "mulanshi|木兰诗|2",
+    "loushiming|陋室铭|1",
+    "ailianshuo|爱莲说|1",
+    "dyztg|登幽州台歌|1",
+    "wangyue|望岳|1",
+    "dflf|登飞来峰|1",
+    "yxsc|游山西村|1",
+    "jhzs|己亥杂诗（其五）|1",
+    "zhuliguan|竹里馆|1",
+    "cyslwfd|春夜洛城闻笛|1",
+    "frjs|逢入京使|1",
+    "wanchun|晚春|1",
+    "bqinh|泊秦淮|1",
+    "jiasheng|贾生|1",
+    "gsyccqgd|过松源晨炊漆公店（其五）|1",
+    "yueke|约客|1",
+    "sanxia|三峡|2",
+    "dxzs|答谢中书书|1",
+    "jctsy|记承天寺夜游|1",
+    "yzysh|与朱元思书|2",
+    "yewang|野望|1",
+    "huanghelou|黄鹤楼|1",
+    "szss|使至塞上|1",
+    "djmsb|渡荆门送别|1",
+    "qthcx|钱塘湖春行|1",
+    "ddz|得道多助，失道寡助|1",
+    "syyh|生于忧患，死于安乐|2",
+    "ygys|愚公移山|3",
+    "yjqw|饮酒（其五）|1",
+    "chunwang|春望|1",
+    "ymtsh|雁门太守行|1",
+    "chibi|赤壁|1",
+    "yjiao|渔家傲（天接云涛连晓雾）|2",
+    "tzyqs|庭中有奇树|1",
+    "guisui|龟虽寿|1",
+    "zcdq2|赠从弟（其二）|1",
+    "lfx|梁甫行|1",
+    "hxs|浣溪沙（一曲新词酒一杯）|1",
+    "czz|采桑子（轻舟短棹西湖好）|1",
+    "xjh|相见欢（金陵城上西楼）|1",
+    "ml|如梦令（常记溪亭日暮）|1",
+    "thyj|桃花源记|3",
+    "xstj|小石潭记|2",
+    "guanju|关雎|1",
+    "jianjia|蒹葭|1",
+    "bmyy|北冥有鱼|2",
+    "syjy|虽有嘉肴|1",
+    "ddzxy|大道之行也|1",
+    "mashuo|马说|2",
+    "shihao|石壕吏|2",
+    "mwcqf|茅屋为秋风所破歌|2",
+    "mtw|卖炭翁|2",
+    "shiwei|式微|1",
+    "zijin|子衿|1",
+    "sdsfz|送杜少府之任蜀州|1",
+    "wdth|望洞庭湖赠张丞相|1",
+    "tbsshcy|题破山寺后禅院|1",
+    "songyouren|送友人|1",
+    "bsz_hz|卜算子·黄州定慧院寓居作|1",
+    "bsz_ym|卜算子·咏梅|1"
+  ];
+
+  var JXS = JXS_RAW.map(function (s) {
+    var p = s.split("|");
+    return { id: p[0], title: p[1], part: p[2] };
+  });
+
+  var QB = [];
+  QB_RAW.forEach(function (s) {
+    var p = s.split("|");
+    var id = p[0], title = p[1], split = parseInt(p[2], 10);
+    if (split === 1) {
+      QB.push({ id: id, title: title, part: "全文" });
+    } else if (split === 2) {
+      QB.push({ id: id, title: title, part: "前半部分" });
+      QB.push({ id: id, title: title, part: "后半部分" });
+    } else {
+      var marks = ["上部分", "中部分", "下部分"];
+      for (var i = 0; i < split; i++) {
+        QB.push({ id: id, title: title, part: marks[i] });
+      }
+    }
+  });
+
+  var TOTAL_DAYS = QB.length;
+  var START = new Date(2026, 9, 8);
+  var WEEK = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+
+  function dateOf(day) {
+    var d = new Date(START.getFullYear(), START.getMonth(), START.getDate() + day - 1);
+    return (d.getMonth() + 1) + "月" + d.getDate() + "日 " + WEEK[d.getDay()];
+  }
+
+  function jxsTaskOf(day) {
+    if (day <= JXS.length) {
+      var t = JXS[day - 1];
+      return { id: t.id, title: t.title, part: t.part, review: false };
+    }
+    var r = JXS[(day - JXS.length - 1) % JXS.length];
+    return { id: r.id, title: r.title, part: "循环复习", review: true };
+  }
+
+  function statusOf(day) {
+    if (day === TODAY_INDEX) return { text: "今日", cls: "bg-[#FFEAD6] text-[#C2410C]" };
+    return { text: "未开始", cls: "bg-[#F3EDE4] text-[#9C8A76]" };
+  }
+
+  function rowHtml(tag, tagCls, id, label, locked) {
+    if (locked) {
+      return '<div class="flex items-center gap-2 rounded-lg bg-[#F7F3EC] px-2.5 py-2 border border-[#F0E7DA] opacity-75">' +
+        '<span class="shrink-0 text-[10px] px-1.5 py-[2px] rounded ' + tagCls + '">' + tag + '</span>' +
+        '<span class="flex-1 text-[12.5px] text-[#A79A8A] truncate">' + label + '</span>' +
+        '<iconify-icon icon="mdi:lock-outline" class="text-[14px] text-[#C9B49B]"></iconify-icon>' +
+        '</div>';
+    }
+    return '<a href="recite.html?id=' + id + '" class="flex items-center gap-2 rounded-lg bg-[#FFFBF6] px-2.5 py-2 border border-[#F7ECDF]">' +
+      '<span class="shrink-0 text-[10px] px-1.5 py-[2px] rounded ' + tagCls + '">' + tag + '</span>' +
+      '<span class="flex-1 text-[12.5px] text-[#3B2E22] truncate">' + label + '</span>' +
+      '<iconify-icon icon="mdi:chevron-right" class="text-[14px] text-[#C9B49B]"></iconify-icon>' +
+      '</a>';
+  }
+
+  function render(filter) {
+    var list = document.getElementById("planList");
+    var html = "";
+
+    for (var day = 1; day <= TOTAL_DAYS; day++) {
+      var jxs = jxsTaskOf(day);
+      var qb = QB[day - 1];
+      var st = statusOf(day);
+      var isToday = day === TODAY_INDEX;
+
+      var showJxs = filter !== "qb" && (filter !== "jxs" || day <= JXS.length);
+      var showQb = filter !== "jxs";
+
+      if (!showJxs && !showQb) continue;
+
+      html += '<div class="mx-4 mt-3 rounded-xl border ' +
+        (isToday ? 'border-[#E8590C] bg-[#FFFDF9] shadow-[0_6px_18px_rgba(232,89,12,.12)]' : 'border-[#F2E3D1] bg-white') +
+        ' px-3.5 py-3">';
+      html += '<div class="flex items-center justify-between">' +
+        '<div class="flex items-center gap-2">' +
+        '<span class="font-song text-[13.5px] font-bold ' + (isToday ? 'text-[#C2410C]' : 'text-[#2A2118]') + '">第 ' + day + ' 天</span>' +
+        '<span class="text-[11px] text-[#A08A70]">' + dateOf(day) + '</span>' +
+        '</div>' +
+        '<span class="px-2 py-[3px] rounded-full text-[10px] ' + st.cls + '">' + st.text + '</span>' +
+        '</div>';
+
+      html += '<div class="mt-2.5 space-y-1.5">';
+      if (showJxs) {
+        html += rowHtml("九上", "bg-[#FFEAD6] text-[#C2410C]", jxs.id, jxs.title + " · " + jxs.part, day > TODAY_INDEX);
+      }
+      if (showQb) {
+        html += rowHtml("七上", "bg-[#EAF1FB] text-[#3B6FB8]", qb.id, qb.title + " · " + qb.part, day > TODAY_INDEX);
+      }
+      html += '</div></div>';
+    }
+
+    if (filter === "jxs") {
+      html += '<p class="mx-4 mt-4 text-[11px] text-[#A08A70] leading-relaxed text-center">九上 33 项安排在第 1–33 天完成。</p>';
+    }
+
+    list.innerHTML = html;
+  }
+
+  function setTabs(active) {
+    var tabs = document.querySelectorAll(".tab");
+    for (var i = 0; i < tabs.length; i++) {
+      var isOn = tabs[i].getAttribute("data-filter") === active;
+      tabs[i].className = "tab flex-1 h-8 rounded-lg text-[12.5px] font-medium transition-colors " +
+        (isOn ? "bg-white text-[#C2410C] shadow-[0_2px_6px_rgba(194,65,12,.12)]" : "text-[#8A7A67]");
+    }
+  }
+
+  var tabs = document.querySelectorAll(".tab");
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].addEventListener("click", function () {
+      var f = this.getAttribute("data-filter");
+      setTabs(f);
+      render(f);
+      document.querySelector("main").scrollTop = 0;
+    });
+  }
+
+  setTabs("all");
+  render("all");
+</script>
+</body>
+</html>

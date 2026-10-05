@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html class="w-full h-full overflow-hidden" lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>数位语文 · 篇目库</title>
+<script src="https://modao.cc/agent-py/static/source/js/tailwindcss.js"></script>
+<script src="https://modao.cc/agent-py/static/source/js/iconify-icon.min.js"></script>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased;}
+  .font-song{font-family:"Songti SC","STSong","SimSun","Noto Serif SC",serif;}
+  .cloud-bg{background-image:radial-gradient(circle at 12% 22%, rgba(255,255,255,.20) 0 1.5px, transparent 2px),radial-gradient(circle at 62% 68%, rgba(255,255,255,.15) 0 1.5px, transparent 2px);background-size:34px 34px,46px 46px;}
+  .noscroll{scrollbar-width:none;}
+  .noscroll::-webkit-scrollbar{display:none;}
+</style>
+</head>
+<body class="w-full h-full m-0 overflow-hidden flex items-center justify-center bg-[#E8DAC7]">
+<div class="w-full h-full max-w-[393px] max-h-[852px] bg-[#FBF7F1] overflow-hidden flex flex-col relative">
+<header class="shrink-0 cloud-bg bg-gradient-to-br from-[#E8590C] to-[#F59E0B] px-5 pt-5 pb-5">
+<div class="flex items-center gap-2">
+<iconify-icon class="text-white text-[20px]" icon="mdi:bookshelf"></iconify-icon>
+<h1 class="font-song text-white text-[17px] font-bold tracking-[0.1em]">篇目库</h1>
+</div>
+<p class="text-white/80 text-[11px] mt-2">九上必背 22 篇 · 七上以来必背 76 篇 · 尚未开始</p>
+</header>
+<div class="shrink-0 bg-[#FBF7F1] px-4 pt-3.5 pb-2 border-b border-[#F0E1CE]">
+<div class="flex bg-[#F3E8DA] rounded-xl p-1">
+<button class="tab flex-1 h-8 rounded-lg text-[12.5px] font-medium transition-colors" data-tab="jxs">九年级上册（22）</button>
+<button class="tab flex-1 h-8 rounded-lg text-[12.5px] font-medium transition-colors" data-tab="qb">七上以来（76）</button>
+</div>
+<div class="mt-2.5 flex items-center gap-2 h-9 rounded-lg bg-white border border-[#F0E1CE] px-3">
+<iconify-icon class="text-[16px] text-[#B9A78F]" icon="mdi:magnify"></iconify-icon>
+<input class="flex-1 h-full bg-transparent outline-none text-[12.5px] text-[#3B2E22] placeholder-[#B9A78F]" id="search" placeholder="搜索篇名或作者" type="text"/>
+</div>
+</div>
+<main class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden noscroll [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden px-4 pt-3 pb-6" id="list"></main>
+<nav class="shrink-0 h-[60px] bg-white border-t border-[#EFE1CE] flex items-stretch">
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-[#A79A8A]" href="home.html">
+<iconify-icon class="text-[21px]" icon="mdi:home-variant-outline"></iconify-icon>
+<span class="text-[10px]">首页</span>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-[#A79A8A]" href="plan.html">
+<iconify-icon class="text-[21px]" icon="mdi:calendar-text-outline"></iconify-icon>
+<span class="text-[10px]">计划</span>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-[#D9480F]" href="library.html">
+<iconify-icon class="text-[21px]" icon="mdi:bookshelf"></iconify-icon>
+<span class="text-[10px] font-medium">篇目库</span>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-[#A79A8A]" href="quiz.html">
+<iconify-icon class="text-[21px]" icon="mdi:clipboard-check-outline"></iconify-icon>
+<span class="text-[10px]">测验</span>
+</a>
+</nav>
+</div>
+<script>
+  var TODAY_INDEX = 17;
+
+  var JXS_RAW = [
+    ["qycxue", "沁园春·雪", "毛泽东", "现代", "词"],
+    ["yylji", "岳阳楼记", "范仲淹", "宋", "文言文"],
+    ["zwtji", "醉翁亭记", "欧阳修", "宋", "文言文"],
+    ["hxtkx", "湖心亭看雪", "张岱", "明", "文言文"],
+    ["xinglunan", "行路难（其一）", "李白", "唐", "诗"],
+    ["chouletian", "酬乐天扬州初逢席上见赠", "刘禹锡", "唐", "诗"],
+    ["sdtou", "水调歌头·明月几时有", "苏轼", "宋", "词"],
+    ["cglz", "曹刿论战", "《左传》", "先秦", "文言文"],
+    ["csbiao", "出师表", "诸葛亮", "三国", "文言文"],
+    ["swcjz", "十五从军征", "《乐府诗集》", "汉", "乐府诗"],
+    ["bxge", "白雪歌送武判官归京", "岑参", "唐", "诗"],
+    ["nxzi", "南乡子·登京口北固亭有怀", "辛弃疾", "宋", "词"],
+    ["gldy", "过零丁洋", "文天祥", "宋", "诗"],
+    ["spy", "山坡羊·潼关怀古", "张养浩", "元", "曲"],
+    ["yyysd", "月夜忆舍弟", "杜甫", "唐", "诗"],
+    ["csgjhz", "长沙过贾谊宅", "刘长卿", "唐", "诗"],
+    ["zqzlg", "左迁至蓝关示侄孙湘", "韩愈", "唐", "诗"],
+    ["sszx", "商山早行", "温庭筠", "唐", "诗"],
+    ["xycdl", "咸阳城东楼", "许浑", "唐", "诗"],
+    ["wuti", "无题", "李商隐", "唐", "诗"],
+    ["xxzi", "行香子·树绕村庄", "秦观", "宋", "词"],
+    ["cne", "丑奴儿·书博山道中壁", "辛弃疾", "宋", "词"]
+  ];
+
+  var JXS_DAY = {
+    qycxue: 1, yylji: 2, zwtji: 7, hxtkx: 9, xinglunan: 10, chouletian: 11,
+    sdtou: 12, cglz: 13, csbiao: 15, swcjz: 21, bxge: 22, nxzi: 23, gldy: 24,
+    spy: 25, yyysd: 26, csgjhz: 27, zqzlg: 28, sszx: 29, xycdl: 30, wuti: 31,
+    xxzi: 32, cne: 33
+  };
+
+  var QB_RAW = [
+    ["gcanghai", "观沧海", "曹操", "东汉", "诗", 1],
+    ["cbgss", "次北固山下", "王湾", "唐", "诗", 1],
+    ["lcqly", "闻王昌龄左迁龙标遥有此寄", "李白", "唐", "诗", 1],
+    ["tjsqs", "天净沙·秋思", "马致远", "元", "曲", 1],
+    ["yongxue", "咏雪", "刘义庆", "南朝", "文言文", 1],
+    ["ctqyq", "陈太丘与友期行", "刘义庆", "南朝", "文言文", 1],
+    ["lunyu", "论语十二章", "孔子及其弟子", "先秦", "文言文", 3],
+    ["jiezi", "诫子书", "诸葛亮", "三国", "文言文", 1],
+    ["emsy", "峨眉山月歌", "李白", "唐", "诗", 1],
+    ["jnflg", "江南逢李龟年", "杜甫", "唐", "诗", 1],
+    ["xjjr", "行军九日思长安故园", "岑参", "唐", "诗", 1],
+    ["yssxc", "夜上受降城闻笛", "李益", "唐", "诗", 1],
+    ["qcqy", "秋词（其一）", "刘禹锡", "唐", "诗", 1],
+    ["yyjb", "夜雨寄北", "李商隐", "唐", "诗", 1],
+    ["syysrfdz", "十一月四日风雨大作（其二）", "陆游", "宋", "诗", 1],
+    ["tguan", "潼关", "谭嗣同", "清", "诗", 1],
+    ["mulanshi", "木兰诗", "《乐府诗集》", "北朝", "乐府诗", 2],
+    ["loushiming", "陋室铭", "刘禹锡", "唐", "文言文", 1],
+    ["ailianshuo", "爱莲说", "周敦颐", "宋", "文言文", 1],
+    ["dyztg", "登幽州台歌", "陈子昂", "唐", "诗", 1],
+    ["wangyue", "望岳", "杜甫", "唐", "诗", 1],
+    ["dflf", "登飞来峰", "王安石", "宋", "诗", 1],
+    ["yxsc", "游山西村", "陆游", "宋", "诗", 1],
+    ["jhzs", "己亥杂诗（其五）", "龚自珍", "清", "诗", 1],
+    ["zhuliguan", "竹里馆", "王维", "唐", "诗", 1],
+    ["cyslwfd", "春夜洛城闻笛", "李白", "唐", "诗", 1],
+    ["frjs", "逢入京使", "岑参", "唐", "诗", 1],
+    ["wanchun", "晚春", "韩愈", "唐", "诗", 1],
+    ["bqinh", "泊秦淮", "杜牧", "唐", "诗", 1],
+    ["jiasheng", "贾生", "李商隐", "唐", "诗", 1],
+    ["gsyccqgd", "过松源晨炊漆公店（其五）", "杨万里", "宋", "诗", 1],
+    ["yueke", "约客", "赵师秀", "宋", "诗", 1],
+    ["sanxia", "三峡", "郦道元", "北魏", "文言文", 2],
+    ["dxzs", "答谢中书书", "陶弘景", "南朝", "文言文", 1],
+    ["jctsy", "记承天寺夜游", "苏轼", "宋", "文言文", 1],
+    ["yzysh", "与朱元思书", "吴均", "南朝", "文言文", 2],
+    ["yewang", "野望", "王绩", "唐", "诗", 1],
+    ["huanghelou", "黄鹤楼", "崔颢", "唐", "诗", 1],
+    ["szss", "使至塞上", "王维", "唐", "诗", 1],
+    ["djmsb", "渡荆门送别", "李白", "唐", "诗", 1],
+    ["qthcx", "钱塘湖春行", "白居易", "唐", "诗", 1],
+    ["ddz", "得道多助，失道寡助", "孟子", "先秦", "文言文", 1],
+    ["syyh", "生于忧患，死于安乐", "孟子", "先秦", "文言文", 2],
+    ["ygys", "愚公移山", "《列子》", "先秦", "文言文", 3],
+    ["yjqw", "饮酒（其五）", "陶渊明", "东晋", "诗", 1],
+    ["chunwang", "春望", "杜甫", "唐", "诗", 1],
+    ["ymtsh", "雁门太守行", "李贺", "唐", "诗", 1],
+    ["chibi", "赤壁", "杜牧", "唐", "诗", 1],
+    ["yjiao", "渔家傲（天接云涛连晓雾）", "李清照", "宋", "词", 2],
+    ["tzyqs", "庭中有奇树", "《古诗十九首》", "汉", "诗", 1],
+    ["guisui", "龟虽寿", "曹操", "东汉", "诗", 1],
+    ["zcdq2", "赠从弟（其二）", "刘桢", "东汉", "诗", 1],
+    ["lfx", "梁甫行", "曹植", "三国", "诗", 1],
+    ["hxs", "浣溪沙（一曲新词酒一杯）", "晏殊", "宋", "词", 1],
+    ["czz", "采桑子（轻舟短棹西湖好）", "欧阳修", "宋", "词", 1],
+    ["xjh", "相见欢（金陵城上西楼）", "朱敦儒", "宋", "词", 1],
+    ["ml", "如梦令（常记溪亭日暮）", "李清照", "宋", "词", 1],
+    ["thyj", "桃花源记", "陶渊明", "东晋", "文言文", 3],
+    ["xstj", "小石潭记", "柳宗元", "唐", "文言文", 2],
+    ["guanju", "关雎", "《诗经》", "先秦", "诗", 1],
+    ["jianjia", "蒹葭", "《诗经》", "先秦", "诗", 1],
+    ["bmyy", "北冥有鱼", "庄子", "先秦", "文言文", 2],
+    ["syjy", "虽有嘉肴", "《礼记》", "先秦", "文言文", 1],
+    ["ddzxy", "大道之行也", "《礼记》", "先秦", "文言文", 1],
+    ["mashuo", "马说", "韩愈", "唐", "文言文", 2],
+    ["shihao", "石壕吏", "杜甫", "唐", "诗", 2],
+    ["mwcqf", "茅屋为秋风所破歌", "杜甫", "唐", "诗", 2],
+    ["mtw", "卖炭翁", "白居易", "唐", "诗", 2],
+    ["shiwei", "式微", "《诗经》", "先秦", "诗", 1],
+    ["zijin", "子衿", "《诗经》", "先秦", "诗", 1],
+    ["sdsfz", "送杜少府之任蜀州", "王勃", "唐", "诗", 1],
+    ["wdth", "望洞庭湖赠张丞相", "孟浩然", "唐", "诗", 1],
+    ["tbsshcy", "题破山寺后禅院", "常建", "唐", "诗", 1],
+    ["songyouren", "送友人", "李白", "唐", "诗", 1],
+    ["bsz_hz", "卜算子·黄州定慧院寓居作", "苏轼", "宋", "词", 1],
+    ["bsz_ym", "卜算子·咏梅", "陆游", "宋", "词", 1]
+  ];
+
+  var QB_INDEX = {};
+  var idx = 0;
+  QB_RAW.forEach(function (p) {
+    QB_INDEX[p[0]] = idx + 1;
+    idx += p[5];
+  });
+
+  function badge() {
+    return '<span class="shrink-0 px-2 py-[3px] rounded-full text-[10px] bg-[#F3EDE4] text-[#9C8A76]">未开始</span>';
+  }
+
+  function rowHtml(num, id, title, author, dynasty, genre, day, split) {
+    var splitTag = split > 1
+      ? '<span class="shrink-0 text-[10px] px-1.5 py-[1px] rounded bg-[#FFF1E2] text-[#C2410C]">分 ' + split + ' 次</span>'
+      : '';
+    return '<a href="recite.html?id=' + id + '" class="flex items-center gap-3 bg-white rounded-xl border border-[#F2E3D1] px-3.5 py-3 mb-2">' +
+      '<span class="shrink-0 w-8 h-8 rounded-lg bg-[#FFF4E8] text-[#C2410C] font-song font-bold text-[13px] flex items-center justify-center">' + num + '</span>' +
+      '<div class="flex-1 min-w-0">' +
+      '<div class="flex items-center gap-1.5">' +
+      '<span class="text-[13.5px] text-[#2A2118] font-medium truncate">' + title + '</span>' +
+      '<span class="shrink-0 text-[10px] px-1.5 py-[1px] rounded bg-[#F3EDE4] text-[#8A7458]">' + genre + '</span>' +
+      splitTag +
+      '</div>' +
+      '<p class="text-[11px] text-[#A08A70] mt-1">' + author + ' · ' + dynasty + ' · 计划第 ' + day + ' 天</p>' +
+      '</div>' + badge() + '</a>';
+  }
+
+  var currentTab = "jxs";
+
+  function render() {
+    var q = document.getElementById("search").value.trim();
+    var html = "";
+    var n = 0;
+
+    if (currentTab === "jxs") {
+      JXS_RAW.forEach(function (p, i) {
+        if (q && p[1].indexOf(q) === -1 && p[2].indexOf(q) === -1) return;
+        html += rowHtml(i + 1, p[0], p[1], p[2], p[3], p[4], JXS_DAY[p[0]], 1);
+        n++;
+      });
+      if (n === 0) html = emptyState(q);
+      html += '<p class="mt-3 text-[11px] text-[#A08A70] leading-relaxed text-center">九上长文按自然段拆分背诵：岳阳楼记 5 段、醉翁亭记 2 次、湖心亭看雪全文、曹刿论战 2 次、出师表 6 段。</p>';
+    } else {
+      QB_RAW.forEach(function (p, i) {
+        if (q && p[1].indexOf(q) === -1 && p[2].indexOf(q) === -1) return;
+        html += rowHtml(i + 1, p[0], p[1], p[2], p[3], p[4], QB_INDEX[p[0]], p[5]);
+        n++;
+      });
+      if (n === 0) html = emptyState(q);
+      html += '<p class="mt-3 text-[11px] text-[#A08A70] leading-relaxed text-center">清单依据语文七上以来必背古诗词，共 76 篇；内容较长的词曲与长诗文拆为两部分或多部分排入计划。</p>';
+    }
+
+    document.getElementById("list").innerHTML = html;
+  }
+
+  function emptyState(q) {
+    return '<div class="mt-10 flex flex-col items-center text-center">' +
+      '<iconify-icon icon="mdi:book-search-outline" class="text-[42px] text-[#D8C7B2]"></iconify-icon>' +
+      '<p class="text-[13px] text-[#8A7A67] mt-3">没有找到与「' + q + '」相关的篇目</p>' +
+      '<p class="text-[11px] text-[#A08A70] mt-1">换个关键词试试，例如篇名或作者</p>' +
+      '</div>';
+  }
+
+  function setTabs(active) {
+    var tabs = document.querySelectorAll(".tab");
+    for (var i = 0; i < tabs.length; i++) {
+      var isOn = tabs[i].getAttribute("data-tab") === active;
+      tabs[i].className = "tab flex-1 h-8 rounded-lg text-[12.5px] font-medium transition-colors " +
+        (isOn ? "bg-white text-[#C2410C] shadow-[0_2px_6px_rgba(194,65,12,.12)]" : "text-[#8A7A67]");
+    }
+  }
+
+  var tabs = document.querySelectorAll(".tab");
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].addEventListener("click", function () {
+      currentTab = this.getAttribute("data-tab");
+      setTabs(currentTab);
+      render();
+    });
+  }
+
+  document.getElementById("search").addEventListener("input", render);
+
+  setTabs("jxs");
+  render();
+</script>
+</body>
+</html>
